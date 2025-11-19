@@ -1,0 +1,31 @@
+# Ignore all development source files
+src/
+example/
+
+# Ignore scripts used for building/testing
+scripts/
+
+# Ignore public assets that are generated/local to project
+public/
+
+# Ignore config files
+tsconfig.json
+tsup.config.ts
+vitest.config.ts
+
+# Ignore tests
+*.test.ts
+*.test.tsx
+
+# Ignore version control and npm ignore files
+.gitignore
+.npmignore
+.prettierrc.json
+.github
+
+# Node modules
+node_modules/
+
+# Other build artifacts not needed in package
+.next/
+.cache/
