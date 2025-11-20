@@ -1,11 +1,10 @@
 import { defineConfig } from 'tsup'
 
 export default defineConfig([
-  // Main library exports (index and dev) - lucide-react is a peer dependency
+  // Production library export
   {
     entry: {
-      index: 'src/index.ts',
-      dev: 'src/dev.ts'
+      index: 'src/index.ts'
     },
     outDir: 'dist',
     format: ['esm', 'cjs'],
@@ -13,7 +12,20 @@ export default defineConfig([
     splitting: false,
     sourcemap: true,
     clean: true,
-    external: ['react', 'react-dom', 'lucide-react']
+    external: ['react', 'react-dom']
+  },
+  // Development library export
+  {
+    entry: {
+      dev: 'src/dev.ts'
+    },
+    outDir: 'dist',
+    format: ['esm', 'cjs'],
+    dts: true,
+    splitting: false,
+    sourcemap: true,
+    clean: false,
+    external: ['react', 'react-dom']
   },
   // CLI export - needs lucide-static and @babel/traverse bundled/required
   {

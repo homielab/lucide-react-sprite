@@ -5,7 +5,7 @@ A high-performance icon system for React applications that uses lucide-react com
 ## Installation
 
 ```bash
-npm install lucide-react-sprite --save
+npm install lucide-react-sprite
 ```
 
 ```bash
@@ -45,26 +45,36 @@ Place your custom SVG icons in the `public/custom-icons/` directory.
 
 ### 3. Generate the sprite
 
-Run the `lucide-sprite` command to generate the SVG sprite. This is typically done as part of your build process.
+Run the `lucide-sprite` command to generate the SVG sprite.
 
-In your `package.json`:
+**For Development:**
+Use the `--all` flag to generate a sprite containing ALL available Lucide icons. This ensures you have access to any icon you might want to use while developing without needing to re-run the generator every time you add a new icon.
+
+**For Production:**
+Run without flags to scan your codebase and generate an optimized sprite containing ONLY the icons you actually use.
+
+Add these scripts to your `package.json`:
 
 ```json
 {
   "scripts": {
-    "build": "your-build-command && lucide-sprite"
+    "dev": "lucide-sprite --all && next dev",
+    "build": "lucide-sprite && next build"
   }
 }
 ```
 
-This will generate a `public/icons.svg` file containing all the used Lucide icons and your custom icons.
+This will generate a `public/icons.svg` file.
 
 ## How it works
 
-This package provides two sets of components:
+Both `<LucideIcon />` and `<CustomIcon />` render an `<svg>` element with a `<use>` tag that points to the generated `icons.svg` sprite. This approach:
 
-- **Development**: In development, `<LucideIcon />` renders the dynamic icon from `lucide-react`, giving you the full benefit of hot-reloading and TypeScript support. `<CustomIcon />` renders an `<img>` tag pointing to your custom SVG file.
-- **Production**: In production, both `<LucideIcon />` and `<CustomIcon />` render an `<svg>` element with a `<use>` tag that points to the generated `icons.svg` sprite. This minimizes network requests and bundle size.
+- ✅ **Minimizes network requests** - Single SVG sprite file
+- ✅ **Reduces bundle size** - No JavaScript icon components
+- ✅ **Zero configuration** - Works out of the box
+- ✅ **Type-safe** - Full TypeScript support with `IconName` type
+- ✅ **Optimized** - SVGO optimization built-in
 
 The `lucide-sprite` CLI tool scans your project for `<LucideIcon />` usage and custom icons, and generates a single, optimized SVG sprite containing only the icons you need.
 

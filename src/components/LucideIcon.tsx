@@ -1,5 +1,5 @@
-import { type IconName } from 'lucide-react/dynamic'
 import React from 'react'
+import { type IconName } from '../types'
 
 type LucideIconProps = {
   name: IconName

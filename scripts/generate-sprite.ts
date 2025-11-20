@@ -165,10 +165,21 @@ function processSvg(svgContent: string, svgoConfig: Config) {
 }
 
 export async function generateSprite(cwd: string = ORIGINAL_CWD) {
+  const generateAll = process.argv.includes('--all')
+
   logger.header('Lucide React Sprite Generator')
   logger.info(
     `Working directory: ${colors.cyan}${path.basename(cwd)}${colors.reset}`
   )
+  if (generateAll) {
+    logger.info(
+      `${colors.magenta}Mode: Development (Generating all icons)${colors.reset}`
+    )
+  } else {
+    logger.info(
+      `${colors.magenta}Mode: Production (Scanning for used icons)${colors.reset}`
+    )
+  }
 
   const startTime = performance.now()
   let originalTotalSize = 0
@@ -194,7 +205,36 @@ export async function generateSprite(cwd: string = ORIGINAL_CWD) {
     ]
   }
 
-  const lucideIcons = await getLucideIcons(cwd)
+  // Resolve lucide-static package location using Node's module resolution
+  let lucideStaticPath: string
+  try {
+    const lucideStaticPackage = require.resolve('lucide-static/package.json', {
+      paths: [cwd, __dirname]
+    })
+    lucideStaticPath = path.join(path.dirname(lucideStaticPackage), 'icons')
+  } catch (error) {
+    logger.error(
+      'Failed to resolve lucide-static package. Make sure it is installed.'
+    )
+    throw error
+  }
+
+  let lucideIcons: Set<string>
+  if (generateAll) {
+    logger.info('Fetching all Lucide icons...')
+    const files = await fs.readdir(lucideStaticPath)
+    lucideIcons = new Set(
+      files
+        .filter((f) => f.endsWith('.svg'))
+        .map((f) => path.basename(f, '.svg'))
+    )
+    logger.success(
+      `Found ${colors.bold}${lucideIcons.size}${colors.reset}${colors.green} total Lucide icons`
+    )
+  } else {
+    lucideIcons = await getLucideIcons(cwd)
+  }
+
   logger.divider()
   const customIcons = await getCustomIcons(cwd)
   logger.divider()
@@ -204,23 +244,6 @@ export async function generateSprite(cwd: string = ORIGINAL_CWD) {
   // Process Lucide icons
   if (lucideIcons.size > 0) {
     logger.info(`Processing ${lucideIcons.size} Lucide icons...`)
-
-    // Resolve lucide-static package location using Node's module resolution
-    let lucideStaticPath: string
-    try {
-      const lucideStaticPackage = require.resolve(
-        'lucide-static/package.json',
-        {
-          paths: [cwd, __dirname]
-        }
-      )
-      lucideStaticPath = path.join(path.dirname(lucideStaticPackage), 'icons')
-    } catch (error) {
-      logger.error(
-        'Failed to resolve lucide-static package. Make sure it is installed.'
-      )
-      throw error
-    }
 
     for (const iconName of lucideIcons) {
       try {
