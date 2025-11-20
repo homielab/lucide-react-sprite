@@ -1,6 +1,6 @@
 {
   "name": "lucide-react-sprite",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "private": false,
   "description": "A high-performance icon system for React applications that uses lucide-react components during development and generates a single, optimized SVG sprite for production builds.",
   "keywords": [
@@ -12,6 +12,11 @@
     "lucide",
     "lucide-react"
   ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -19,13 +24,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/homielab/lucide-react-sprite.git"
+    "url": "git+https://github.com/homielab/lucide-react-sprite.git"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "bin": {
-    "lucide-sprite": "./dist/cli.js"
+    "lucide-sprite": "dist/cli.js"
   },
   "scripts": {
     "dev": "tsup --watch",
@@ -54,6 +59,7 @@
   "dependencies": {
     "@babel/parser": "^7.28.5",
     "@babel/traverse": "^7.28.5",
+    "@types/babel__traverse": "^7.28.0",
     "glob": "^12.0.0",
     "lucide-static": "^0.554.0",
     "svgo": "^4.0.0"
@@ -61,7 +67,6 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
-    "@types/babel__traverse": "^7.28.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
