@@ -10,19 +10,14 @@ This directory contains an example Next.js project that demonstrates how to use 
     npm install
     npm run build
     ```
-3.  **Link the package globally:**
-    ```bash
-    npm link
-    ```
-4.  **Navigate into the `example` directory:**
+3.  **Navigate into the `example` directory:**
     ```bash
     cd example
     ```
-5.  **Install the example's dependencies and link the package:**
+4.  **Install the example's dependencies and link the package:**
     ```bash
     npm install
     ```
-    The `postinstall` script will automatically run `npm link lucide-react-sprite`.
 
 ## Running the Example
 

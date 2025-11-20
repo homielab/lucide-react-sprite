@@ -5,7 +5,7 @@ import { promises as fs } from 'fs'
 import { glob } from 'glob'
 import path from 'path'
 import { performance } from 'perf_hooks'
-import { optimize } from 'svgo'
+import { type Config, optimize } from 'svgo'
 
 const ORIGINAL_CWD = process.cwd()
 
@@ -75,9 +75,8 @@ async function getLucideIcons(cwd: string) {
           ) {
             const nameAttribute = path.node.attributes.find(
               (attr) =>
-                attr.type === 'JSXAttribute' &&
-                (attr as any).name.name === 'name'
-            ) as any
+                attr.type === 'JSXAttribute' && attr.name.name === 'name'
+            )
 
             if (
               nameAttribute &&
@@ -151,7 +150,7 @@ async function getCustomIcons(cwd: string) {
   return files
 }
 
-function processSvg(svgContent: string, svgoConfig: any) {
+function processSvg(svgContent: string, svgoConfig: Config) {
   const { data } = optimize(svgContent, svgoConfig)
   const innerContent = data.match(/<svg[^>]*>([\s\S]*)<\/svg>/)?.[1] ?? ''
   let attributes = data.match(/<svg([^>]*)>/)?.[1] ?? ''
@@ -181,7 +180,7 @@ export async function generateSprite(cwd: string = ORIGINAL_CWD) {
   logger.log(`Output: public/icons.svg`)
   logger.divider()
 
-  const svgoConfig = {
+  const svgoConfig: Config = {
     plugins: [
       {
         name: 'preset-default',
@@ -205,15 +204,27 @@ export async function generateSprite(cwd: string = ORIGINAL_CWD) {
   // Process Lucide icons
   if (lucideIcons.size > 0) {
     logger.info(`Processing ${lucideIcons.size} Lucide icons...`)
+
+    // Resolve lucide-static package location using Node's module resolution
+    let lucideStaticPath: string
+    try {
+      const lucideStaticPackage = require.resolve(
+        'lucide-static/package.json',
+        {
+          paths: [cwd, __dirname]
+        }
+      )
+      lucideStaticPath = path.join(path.dirname(lucideStaticPackage), 'icons')
+    } catch (error) {
+      logger.error(
+        'Failed to resolve lucide-static package. Make sure it is installed.'
+      )
+      throw error
+    }
+
     for (const iconName of lucideIcons) {
       try {
-        const iconPath = path.join(
-          cwd,
-          'node_modules',
-          'lucide-static',
-          'icons',
-          `${iconName}.svg`
-        )
+        const iconPath = path.join(lucideStaticPath, `${iconName}.svg`)
         const svgContent = await fs.readFile(iconPath, 'utf-8')
         originalTotalSize += Buffer.byteLength(svgContent, 'utf-8')
         const { content, attributes } = processSvg(svgContent, svgoConfig)

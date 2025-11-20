@@ -1,4 +1,4 @@
-'use client' // Required for conditional rendering based on environment
+'use client'
 
 import { CustomIcon, LucideIcon } from 'lucide-react-sprite'
 
